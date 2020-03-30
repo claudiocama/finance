@@ -123,7 +123,7 @@ class backtest():
         cerebro.addanalyzer(btanalyzers.TradeAnalyzer, _name='TA')
         cerebro.addanalyzer(btanalyzers.DrawDown, _name='Max_DD')
         cerebro.addanalyzer(btanalyzers.AnnualReturn, _name='Annual_Return')
-        cerebro.addanalyzer(btanalyzers.SharpeRatio, _name='Sharpe_Ratio')
+        cerebro.addanalyzer(btanalyzers.SharpeRatio, _name='Sharpe_Ratio', riskfreerate=0.0)
         cerebro.addanalyzer(btanalyzers.SQN, _name='SQN')
         cerebro.addanalyzer(self.date_trades_lists, _name='date_trades_lists')
 
@@ -137,17 +137,14 @@ class backtest():
         capitale_iniziale = self.cash
         trades_list = ris.analyzers.date_trades_lists.get_analysis()
         tr = ris.analyzers.TA.get_analysis()
-        AR = 1
-        for key, value in ris.analyzers.Annual_Return.get_analysis().items():
-                AR *= (1+value)
         if "BuyHold" in self.strategy.__name__:
             ret = {
                     'starting_value' : self.cash,
                     'ending_value' : cerebro.broker.getvalue(),
                     'net_profit' : round(cerebro.broker.getvalue()-capitale_iniziale),
                     'total_return' : round((cerebro.broker.getvalue()-capitale_iniziale)/capitale_iniziale*100,2),
-                    'annualized_return' : round((AR**(1/len(ris.analyzers.Annual_Return.get_analysis().items()))-1)*100, 2),
-                    'sharpe_ratio' : ris.analyzers.Sharpe_Ratio.get_analysis() ['sharperatio']
+                    'annualized_return' : round(((((cerebro.broker.getvalue()-capitale_iniziale)/capitale_iniziale)+1)**(1/(len(ris.analyzers.Annual_Return.get_analysis().items())-1))-1)*100, 2),
+                    'sharpe_ratio' : ris.analyzers.Sharpe_Ratio.get_analysis() ['sharperatio'],
                 }
         elif tr['total']['total']: # >= 1 trade
             ret = {
@@ -159,7 +156,7 @@ class backtest():
                     'max_drawdown_perc' : round(ris.analyzers.Max_DD .get_analysis()['max']['drawdown'],2),
                     'max_drawdown' : round(ris.analyzers.Max_DD .get_analysis()['max']['moneydown']),
                     'total_return' : round((cerebro.broker.getvalue()-capitale_iniziale)/capitale_iniziale*100,2),
-                    'annualized_return' : round((AR**(1/len(ris.analyzers.Annual_Return.get_analysis().items()))-1)*100, 2),
+                    'annualized_return' : round(((((cerebro.broker.getvalue()-capitale_iniziale)/capitale_iniziale)+1)**(1/(len(ris.analyzers.Annual_Return.get_analysis().items())-1))-1)*100, 2),
                     'trades_numbers' : tr['total']['total'],
                     'winning_trades' : tr['won']['total']/tr['total'] ['total']*100,
                     'losing_trades' : tr['lost']['total']/tr['total'] ['total']*100,
