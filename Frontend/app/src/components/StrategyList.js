@@ -24,7 +24,7 @@ class StrategyList extends Component {
                               .reduce((obj, key) => {
                                 obj[key] = this.props.strategy_parameters[key];
                                 return obj;
-                              }, {}); //filter strategy to print by type
+                              }, {}); //filter strategy to print by type (buy, sell)
     for (const strategy in strategy_parameters){
       list.push(<StrategyItem name={strategy} parameters={strategy_parameters[strategy]} />);
     }
