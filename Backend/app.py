@@ -54,4 +54,4 @@ def algo_backtest():
 
 @app.route('/finance/portfolio_montecarlo', methods=['POST'])
 def portfolio_montecarlo():
-    return str(pf_montecarlo(request.json["tick"]))
+    return jsonify(pf_montecarlo(request.json["tick"]))

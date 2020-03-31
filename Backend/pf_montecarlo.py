@@ -18,20 +18,23 @@ def pf_montecarlo(tick):
     df_diff = pd.concat([df["Diff_Close"] for df in list_df], axis=1)
 
     def ret_std(portfolio):
-        total_return = (df_rit.iloc[-1] * portfolio).sum()
-        total_std = (df_rit.std() * portfolio).sum()
-        SR = ((np.sqrt(252) * df_diff.mean()/df_diff.std()) * portfolio).sum()
+        total_return = round((df_rit.iloc[-1] * portfolio).sum(), 3)
+        total_std = round((df_rit.std() * portfolio).sum(), 3)
+        SR = round(((np.sqrt(252) * df_diff.mean()/df_diff.std()) * portfolio).sum(), 3)
         return [total_return, total_std, SR]
 
     portfolio_pesi = []
     rendimenti = []
     rischi = []
     SR = []
-    for i in range (10):
+    for i in range (2500):
         pesi_temp = np.array(np.random.random(len(tick)))
         pesi = pesi_temp/np.sum(pesi_temp)
         portfolio = ret_std(pesi)
-        portfolio_pesi.append(pesi)
+        pesi_str = ""
+        for t in range(len(tick)):
+            pesi_str += "-"+tick[t]+":"+str(pesi.tolist()[t])[:5]+"-"
+        portfolio_pesi.append(pesi_str)
         rendimenti.append(portfolio[0])
         rischi.append(portfolio[1])
         SR.append(portfolio[2])
